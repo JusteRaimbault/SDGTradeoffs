@@ -3,7 +3,7 @@ val syntheticCities = Val[Int]
 val syntheticHierarchy = Val[Double]
 val syntheticMaxPop = Val[Double]
 val finalTime = Val[Int]
-val seed = Val[Long]
+val replication = Val[Long]
 
 val innovationWeight = Val[Double]
 val innovationGravityDecay = Val[Double]
@@ -28,8 +28,6 @@ val coevolNetworkGmax = Val[Double]
 val coevolNetworkExponent = Val[Double]
 val coevolNetworkThresholdQuantile = Val[Double]
 
-val replication = Val[Int]
-
 // indicators
 val gravityFlows = Val[Double]
 val oppAverageUtility = Val[Double]
@@ -39,14 +37,14 @@ val oppWealth = Val[Double]
 
 val model = ScalaTask("""
     |import org.openmole.spatialdata.application.sdg.SDG
-    |implicit val rng: Random = new Random
+    |implicit val rng: scala.util.Random = new scala.util.Random
     |
-    |val model = SDG.syntheticMultiMacroModel(
+    |val result = SDG.runSyntheticMultiMacroModel(
     |   syntheticCities = input.syntheticCities,
     |   syntheticHierarchy = input.syntheticHierarchy,
     |   syntheticMaxPop = input.syntheticMaxPop,
     |   finalTime = input.finalTime,
-    |   seed = input.seed,
+    |   seed = input.replication,
     |   innovationWeight = input.innovationWeight,
     |   innovationGravityDecay = input.innovationGravityDecay,
     |   innovationInnovationDecay = input.innovationInnovationDecay,
@@ -69,8 +67,6 @@ val model = ScalaTask("""
     |   coevolNetworkThresholdQuantile = input.coevolNetworkThresholdQuantile
     |)
     |
-    |val result = model.run.asInstanceOf[MultiMacroResult]
-    |
     |val gravityFlows = SDG.cumulatedFlows(result)
     |val oppAverageUtility = -1.0 * SDG.averageUtility(result)
     |val averageDistance = SDG.averageDistance(result)
@@ -78,7 +74,7 @@ val model = ScalaTask("""
     |val oppWealth = -1.0 * SDG.averageWealth(result)
     """.stripMargin
 ) set (
-    (inputs,outputs) += (syntheticCities, syntheticHierarchy, syntheticMaxPop, finalTime, seed, innovationWeight,
+    (inputs,outputs) += (syntheticCities, syntheticHierarchy, syntheticMaxPop, finalTime, replication, innovationWeight,
         innovationGravityDecay, innovationInnovationDecay, innovationMutationRate, innovationNewInnovationHierarchy,
         innovationEarlyAdoptersRate, innovationUtilityStd, innovationUtilityDistrib, ecoWeight, ecoSizeEffectOnDemand,
         ecoSizeEffectOnSupply, ecoGravityDecay, ecoWealthToPopulationExponent, ecoPopulationToWealthExponent, coevolWeight,
@@ -92,7 +88,7 @@ val replications = Replication(
   evaluation = model,
   seed = replication,
   sample = 10,
-  aggregation = Seq(gravityFlows aggregate median, oppAverageUtility aggregate median, averageDistance aggregate median, giniEconomicWealth aggregate mmedian, oppWealth aggregate median)
+  aggregation = Seq(gravityFlows aggregate median, oppAverageUtility aggregate median, averageDistance aggregate median, giniEconomicWealth aggregate median, oppWealth aggregate median)
 )
     
 
@@ -114,7 +110,7 @@ NSGA2Evolution(
         innovationNewInnovationHierarchy in (0.1,2.0),
         innovationEarlyAdoptersRate in (0.01,0.9),
         innovationUtilityStd in (0.7,2.0),
-        innovationUtilityDistrib in Seq("normal","log-normal")
+        innovationUtilityDistrib in Seq("normal","log-normal"),
         ecoWeight in (0.0, 0.05),
         ecoSizeEffectOnDemand in (0.1, 2.0),
         ecoSizeEffectOnSupply in (0.1, 2.0),
