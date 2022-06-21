@@ -1,0 +1,139 @@
+// parameters
+val syntheticCities = Val[Int]
+val syntheticHierarchy = Val[Double]
+val syntheticMaxPop = Val[Double]
+val finalTime = Val[Int]
+val seed = Val[Long]
+
+val innovationWeight = Val[Double]
+val innovationGravityDecay = Val[Double]
+val innovationInnovationDecay = Val[Double]
+val innovationMutationRate = Val[Double]
+val innovationNewInnovationHierarchy = Val[Double]
+val innovationEarlyAdoptersRate = Val[Double]
+val innovationUtilityStd = Val[Double]
+val innovationUtilityDistrib = Val[String]
+
+val ecoWeight = Val[Double]
+val ecoSizeEffectOnDemand = Val[Double]
+val ecoSizeEffectOnSupply = Val[Double]
+val ecoGravityDecay = Val[Double]
+val ecoWealthToPopulationExponent = Val[Double]
+val ecoPopulationToWealthExponent = Val[Double]
+
+val coevolWeight = Val[Double]
+val coevolGamma = Val[Double]
+val coevolGravityDecay = Val[Double]
+val coevolNetworkGmax = Val[Double]
+val coevolNetworkExponent = Val[Double]
+val coevolNetworkThresholdQuantile = Val[Double]
+
+val replication = Val[Int]
+
+// indicators
+val gravityFlows = Val[Double]
+val oppAverageUtility = Val[Double]
+val averageDistance = Val[Double]
+val giniEconomicWealth = Val[Double]
+val oppWealth = Val[Double]
+
+val model = ScalaTask("""
+    |import org.openmole.spatialdata.application.sdg.SDG
+    |implicit val rng: Random = new Random
+    |
+    |val model = SDG.syntheticMultiMacroModel(
+    |   syntheticCities = input.syntheticCities,
+    |   syntheticHierarchy = input.syntheticHierarchy,
+    |   syntheticMaxPop = input.syntheticMaxPop,
+    |   finalTime = input.finalTime,
+    |   seed = input.seed,
+    |   innovationWeight = input.innovationWeight,
+    |   innovationGravityDecay = input.innovationGravityDecay,
+    |   innovationInnovationDecay = input.innovationInnovationDecay,
+    |   innovationMutationRate = input.innovationMutationRate,
+    |   innovationNewInnovationHierarchy = input.innovationNewInnovationHierarchy,
+    |   innovationEarlyAdoptersRate = input.innovationEarlyAdoptersRate,
+    |   innovationUtilityStd = input.innovationUtilityStd,
+    |   innovationUtilityDistrib = input.innovationUtilityDistrib,
+    |   ecoWeight = input.ecoWeight,
+    |   ecoSizeEffectOnDemand = input.ecoSizeEffectOnDemand,
+    |   ecoSizeEffectOnSupply = input.ecoSizeEffectOnSupply,
+    |   ecoGravityDecay = input.ecoGravityDecay,
+    |   ecoWealthToPopulationExponent = input.ecoWealthToPopulationExponent,
+    |   ecoPopulationToWealthExponent = input.ecoPopulationToWealthExponent,
+    |   coevolWeight = input.coevolWeight,
+    |   coevolGamma = input.coevolGamma,
+    |   coevolGravityDecay = input.coevolGravityDecay,
+    |   coevolNetworkGmax = input.coevolNetworkGmax,
+    |   coevolNetworkExponent = input.coevolNetworkExponent,
+    |   coevolNetworkThresholdQuantile = input.coevolNetworkThresholdQuantile
+    |)
+    |
+    |val result = model.run.asInstanceOf[MultiMacroResult]
+    |
+    |val gravityFlows = SDG.cumulatedFlows(result)
+    |val oppAverageUtility = -1.0 * SDG.averageUtility(result)
+    |val averageDistance = SDG.averageDistance(result)
+    |val giniEconomicWealth = SDG.giniEconomicWealth(result)
+    |val oppWealth = -1.0 * SDG.averageWealth(result)
+    """.stripMargin
+) set (
+    (inputs,outputs) += (syntheticCities, syntheticHierarchy, syntheticMaxPop, finalTime, seed, innovationWeight,
+        innovationGravityDecay, innovationInnovationDecay, innovationMutationRate, innovationNewInnovationHierarchy,
+        innovationEarlyAdoptersRate, innovationUtilityStd, innovationUtilityDistrib, ecoWeight, ecoSizeEffectOnDemand,
+        ecoSizeEffectOnSupply, ecoGravityDecay, ecoWealthToPopulationExponent, ecoPopulationToWealthExponent, coevolWeight,
+        coevolGamma, coevolGravityDecay, coevolNetworkGmax, coevolNetworkExponent, coevolNetworkThresholdQuantile, replication),
+    outputs += (gravityFlows, oppAverageUtility, averageDistance, giniEconomicWealth, oppWealth),
+    plugins += pluginsOf[_root_.org.openmole.spatialdata.application.sdg.SDG],
+    syntheticCities := 30, syntheticHierarchy := 1.0, syntheticMaxPop := 100000.0, finalTime := 20
+)
+
+val replications = Replication(
+  evaluation = model,
+  seed = replication,
+  sample = 10,
+  aggregation = Seq(gravityFlows aggregate median, oppAverageUtility aggregate median, averageDistance aggregate median, giniEconomicWealth aggregate mmedian, oppWealth aggregate median)
+)
+    
+
+//val purpose = "OPTIMISATION_GRID"
+val purpose = "OPTIMISATION_TEST"
+val datestr = (new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()).toString
+val resdir = purpose+"_"+datestr
+
+//val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+val env = LocalEnvironment(5)
+
+NSGA2Evolution(
+    genome =
+      Seq(
+        innovationWeight in (0.0, 0.05),
+        innovationGravityDecay in (0.01,1.5),
+        innovationInnovationDecay in (0.01,1.5),
+        innovationMutationRate in (0.01,0.5),
+        innovationNewInnovationHierarchy in (0.1,2.0),
+        innovationEarlyAdoptersRate in (0.01,0.9),
+        innovationUtilityStd in (0.7,2.0),
+        innovationUtilityDistrib in Seq("normal","log-normal")
+        ecoWeight in (0.0, 0.05),
+        ecoSizeEffectOnDemand in (0.1, 2.0),
+        ecoSizeEffectOnSupply in (0.1, 2.0),
+        ecoGravityDecay in (0.01,1.5),
+        ecoWealthToPopulationExponent in (0.1, 2.0),
+        ecoPopulationToWealthExponent in (0.1, 2.0),
+        coevolWeight in (0.0, 0.05),
+        coevolGamma in (0.1, 2.0),
+        coevolGravityDecay in (0.01,1.5),
+        coevolNetworkGmax in (0.0, 0.05),
+        coevolNetworkExponent in (0.1, 2.0),
+        coevolNetworkThresholdQuantile in (0.1, 0.9)
+      ),
+      populationSize = 100,
+      objective = Seq(gravityFlows, oppAverageUtility, averageDistance, giniEconomicWealth, oppWealth),
+      evaluation = (replications on env),
+      termination = 100,
+      parallelism = 5//,
+      //distribution = Island(10 minutes)
+) hook (workDirectory / "optimisation" / resdir)//,1000)
+
+
