@@ -92,13 +92,14 @@ val replications = Replication(
 )
     
 
+//val purpose = "OPTIMISATION_LOCAL"
 val purpose = "OPTIMISATION_GRID"
 //val purpose = "OPTIMISATION_TEST"
 val datestr = (new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()).toString
 val resdir = purpose+"_"+datestr
 
 val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
-//val env = LocalEnvironment(5)
+//val env = LocalEnvironment(16)
 
 NSGA2Evolution(
     genome =
@@ -111,7 +112,7 @@ NSGA2Evolution(
         innovationEarlyAdoptersRate in (0.01,0.9),
         innovationUtilityStd in (0.7,2.0),
         innovationUtilityDistrib in Seq("normal","log-normal"),
-        ecoWeight in (0.0, 0.05),
+        ecoWeight in (0.0001, 0.05), // cant be 0 (supply/demand comput)
         ecoSizeEffectOnDemand in (0.1, 2.0),
         ecoSizeEffectOnSupply in (0.1, 2.0),
         ecoGravityDecay in (0.01,1.5),
@@ -129,7 +130,7 @@ NSGA2Evolution(
       evaluation = replications,
       termination = 10000000,
       parallelism = 1000,
-      distribution = Island(30 minutes)
-) on env hook (workDirectory / "optimisation" / resdir,1000)
+      distribution = Island(15 minutes)
+) on env hook (workDirectory / "optimisation" / resdir,100)
 
 
