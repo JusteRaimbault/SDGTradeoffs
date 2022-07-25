@@ -68,7 +68,10 @@
 
 
 
-\title{Multi-modeling urban systems dynamics to explore sustainability trade-offs}
+% title FRCCS
+%\title{Multi-modeling urban systems dynamics to explore sustainability trade-offs}
+% title UGI-Urban
+\title{Trade-offs between sustainable development goals in systems of cities}
 
 \author{J.~Raimbault$^{1,2,3,4}$ and D.~Pumain$^4$\\
 \texttt{juste.raimbault@ign.fr}
@@ -82,10 +85,15 @@ $^{4}$UMR CNRS 8504 G{\'e}ographie-cit{\'e}s
 }
 
 
-\date{French Regional Conference on Complex Systems 2022\\
-June 22th 2022\\\bigskip
-\includegraphics[width=0.1\textwidth]{figures/logoFRCCS}
+%\date{French Regional Conference on Complex Systems 2022\\
+%June 22th 2022\\\bigskip
+%\includegraphics[width=0.1\textwidth]{figures/logoFRCCS}
+%}
+
+\date{2022 IGU Urban Commission Annual Meeting\\
+July 25th 2022
 }
+
 
 
 %Cities and urban systems appear as key elements to tackle the challenges of sustainability, as they combine negative and positive externalities on multiple dimensions, including the envi- ronmental and the socio-economic aspects. Besides, empirical, modeling and theoretical evidence suggest the existence of trade-offs between different Sustainable Development Goals (SDGs) in urban systems. We propose in this contribution to investigate such trade-offs from a modeling perspective. Building on previous work benchmarking macroscopic models of urban systems dy- namics (Raimbault, Denis & Pumain, 2020) based on the evolutionary urban theory (Pumain, 2018), we introduce in a multi-modeling approach the coupling of several layers for complemen- tary dimensions of urban systems. More precisely, we combine an innovation diffusion model, an economic exchange model, and a transportation network model, with a common core of population dynamics. The resulting macroscopic model is parametrised on population data for large urban systems worldwide (Pumain et al., 2015), and integrated into the OpenMOLE platform for model exploration and validation (Reuillon et al., 2013). This allows running a multi-objective optimi- sation algorithm on proxy indicators for multiple goals: innovation (goal 8 “Economic Growth”), transportation network (goal 9 “Infrastructure”), economic inequalities between cities (goal 10 “Inequalities”), and greenhouse gases emissions (goal 13 “Climate”). We therein confirm the ex- istence of trade-offs in macroscopic urban dynamics by obtaining Pareto front between these four dimensions. Future perspectives include the extension to multi-scale models to include intra-urban dimensions (and some aspects of goal 11 “Sustainable cities and societies”) and further model in- tegration to account for other dimensions and goals. Altogether, this horizontal and vertical model integration approach builds the foundations towards multi-scale policies for sustainable territories (Raimbault, 2021).
@@ -525,16 +533,29 @@ Raimbault, J. (2020). Hierarchy and co-evolution processes in urban systems. For
 
 \sframe{Optimisation results}{
 
-% ? - if no result, LHS? bof. - local algo?
 
 \begin{center}
-\includegraphics[width=0.86\linewidth]{figures/scatter_models_colorginiEconomicWealth.png}
+\includegraphics[width=0.86\linewidth]{figures/scatter_models_colorginiEconomicWealth_OPTIMISATION_GRID_20220622_092133.png}
 \end{center}
 
 \footnotesize
 \textit{Scatterplots of the 5D Pareto front. Color level: Gini economic wealth.}
 
 }
+
+\sframe{Optimisation results}{
+
+
+\begin{center}
+\includegraphics[width=0.65\linewidth]{figures/radar_sdgs.png}
+\end{center}
+
+\tiny
+\textit{Radar plot for the many-objective optimisation (colour: best solution along each dimension)}
+
+}
+
+
 
 
 
