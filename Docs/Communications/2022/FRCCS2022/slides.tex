@@ -247,9 +247,9 @@ At each time step, with $P_i \left(t\right)$ population, $\delta_{c,i}\left(t\ri
 	\]
 	\item Population growth through spatial interactions $P_i\left(t\right) - P_i\left(t-1\right) \textrm{ = } w_I\cdot \sum_j \frac{V_{ij}}{<V_{ij}>}$ with
 	\[ 
-	V_{ij} \textrm{ = } \frac{P_{i}\left(t-1\right) \cdot P_{j}\left(t-1\right)}{\left(\sum_k P_k\left(t-1\right)\right)^2} \cdot \exp{\left(-\frac{d_{ij}}{d_G} \cdot \prod_c \delta_{c,i,t}^{\phi_{c,t}}\right)}
+	V_{ij} \textrm{ = } \frac{P_{i}\left(t-1\right) \cdot P_{j}\left(t-1\right)}{\left(\sum_k P_k\left(t-1\right)\right)^2} \cdot \exp{\left(-\frac{d_{ij}}{d_G} \right) \cdot \prod_c \delta_{c,i,t}^{\phi_{c,t}}}
 	\]
-	and $\phi_{c,t} \textrm{ = } \sum_i \delta_{i,c,t}\cdot P_i\left(t-1\right) /\sum_{i,c} \delta_{i,c,t}\cdot P_{i}\left(t-1\right)$
+	and $\phi_{c,t} \textrm{ = } \sum_i \delta_{i,c,t}\cdot P_i\left(t-1\right) /\sum_{i} P_{i}\left(t-1\right)$
 	\item Mutations with innovations introduced with probability $\beta \cdot \left(P_i \left(t\right) / \max_k P_k \left(t\right)\right)^{\alpha_I}$ and an initial penetration rate $r_0$; new utility $u_c$ randomly distributed (normal or log-normal) with average current average utility and standard deviation a given parameter $\sigma_U$
 \end{enumerate}
 
