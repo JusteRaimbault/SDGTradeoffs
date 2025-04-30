@@ -4,3 +4,6 @@
 [submodule "Docs/Communications/2024/CCS2024/CCS2024-SDGs"]
 	path = Docs/Communications/2024/CCS2024/CCS2024-SDGs
 	url = git@github.com:JusteRaimbault/CCS2024-SDGs.git
+[submodule "Docs/Communications/2025/ECTQG2025-Abstract-UrbanSystems"]
+	path = Docs/Communications/2025/ECTQG2025-Abstract-UrbanSystems
+	url = git@github.com:JusteRaimbault/ECTQG2025-Abstract-UrbanSystems.git
