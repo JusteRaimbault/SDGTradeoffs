@@ -1,0 +1,147 @@
+// parameters
+val urbanSystem = Val[String]
+val replication = Val[Long]
+
+val innovationWeight = Val[Double]
+val innovationGravityDecay = Val[Double]
+val innovationInnovationDecay = Val[Double]
+val innovationMutationRate = Val[Double]
+val innovationNewInnovationHierarchy = Val[Double]
+val innovationEarlyAdoptersRate = Val[Double]
+val innovationUtilityStd = Val[Double]
+val innovationUtilityDistrib = Val[String]
+
+val ecoWeight = Val[Double]
+val ecoMultiplier = Val[Double]
+val ecoSizeEffectOnDemand = Val[Double]
+val ecoSizeEffectOnSupply = Val[Double]
+val ecoGravityDecay = Val[Double]
+val ecoWealthToPopulationExponent = Val[Double]
+val ecoPopulationToWealthExponent = Val[Double]
+
+val coevolWeight = Val[Double]
+val coevolGamma = Val[Double]
+val coevolGravityDecay = Val[Double]
+val coevolNetworkGmax = Val[Double]
+val coevolNetworkExponent = Val[Double]
+val coevolNetworkThresholdQuantile = Val[Double]
+
+// targetsPSE
+val avgLogPop1 = Val[Double]
+val avgLogPop2 = Val[Double]
+val avgLogPop3 = Val[Double]
+val stdLogPop1 = Val[Double]
+val stdLogPop2 = Val[Double]
+val stdLogPop3 = Val[Double]
+
+// indicators SDGs
+val gravityFlows = Val[Double]
+val oppAverageUtility = Val[Double]
+val averageDistance = Val[Double]
+val giniEconomicWealth = Val[Double]
+val oppWealth = Val[Double]
+
+val model = ScalaTask("""
+    |import org.openmole.spatialdata.application.multimodelmacro._
+    |implicit val rng: scala.util.Random = new scala.util.Random
+    |val popFile= (workDirectory / ("data/"+input.urbanSystem+"_pops.csv")).toString
+    |val distFile = (workDirectory / ("data/"+input.urbanSystem+"_dist.csv")).toString
+    |val dateFile = (workDirectory / ("data/"+input.urbanSystem+"_dates.csv")).toString
+    |
+    |val initialState = RealData.setupRealDataFutureTrajectories(popFile, distFile,3)
+    |
+    |val result: SDG.Result = SDG.runMultiModelMacro(
+    |  SDG.setupMultiModelMacro(
+    |   initialState._1, initialState._2, initialState._3,
+    |   seed = input.replication,
+    |   innovationWeight = input.innovationWeight,
+    |   innovationGravityDecay = input.innovationGravityDecay,
+    |   innovationInnovationDecay = input.innovationInnovationDecay,
+    |   innovationMutationRate = input.innovationMutationRate,
+    |   innovationNewInnovationHierarchy = input.innovationNewInnovationHierarchy,
+    |   innovationEarlyAdoptersRate = input.innovationEarlyAdoptersRate,
+    |   innovationUtilityStd = input.innovationUtilityStd,
+    |   innovationUtilityDistrib = input.innovationUtilityDistrib,
+    |   ecoWeight = input.ecoWeight,
+    |   ecoMultiplier = input.ecoMultiplier,
+    |   ecoSizeEffectOnDemand = input.ecoSizeEffectOnDemand,
+    |   ecoSizeEffectOnSupply = input.ecoSizeEffectOnSupply,
+    |   ecoGravityDecay = input.ecoGravityDecay,
+    |   ecoWealthToPopulationExponent = input.ecoWealthToPopulationExponent,
+    |   ecoPopulationToWealthExponent = input.ecoPopulationToWealthExponent,
+    |   coevolWeight = input.coevolWeight,
+    |   coevolGamma = input.coevolGamma,
+    |   coevolGravityDecay = input.coevolGravityDecay,
+    |   coevolNetworkGmax = input.coevolNetworkGmax,
+    |   coevolNetworkExponent = input.coevolNetworkExponent,
+    |   coevolNetworkThresholdQuantile = input.coevolNetworkThresholdQuantile
+    |))
+    |val avgLogPop = result.result.simulatedPopulation.values.transpose.map{col => col.map(math.log).sum/col.length}.toSeq
+    |val (avgLogPop1,avgLogPop2,avgLogPop3) = (avgLogPop(0),avgLogPop(1),avgLogPop(2))
+    |val stdLogPop = result.result.simulatedPopulation.values.transpose.map{col => org.openmole.spatialdata.utils.math.Statistics.std(col.map(math.log))}.toSeq
+    |val (stdLogPop1,stdLogPop2,stdLogPop3) = (stdLogPop(0),stdLogPop(1),stdLogPop(2))
+    |
+    |val gravityFlows = SDG.cumulatedFlows(result)
+    |val oppAverageUtility = -1.0 * SDG.averageUtility(result)
+    |val averageDistance = SDG.averageDistance(result)
+    |val giniEconomicWealth = SDG.giniEconomicWealth(result)
+    |val oppWealth = -1.0 * SDG.averageWealth(result)
+    """.stripMargin
+) set (
+    (inputs,outputs) += (urbanSystem, replication,
+    innovationWeight,innovationGravityDecay, innovationInnovationDecay, innovationMutationRate, 
+    innovationNewInnovationHierarchy,innovationEarlyAdoptersRate, innovationUtilityStd, innovationUtilityDistrib,
+    ecoWeight, ecoMultiplier, ecoSizeEffectOnDemand,ecoSizeEffectOnSupply, ecoGravityDecay, ecoWealthToPopulationExponent, ecoPopulationToWealthExponent,
+    coevolWeight,coevolGamma, coevolGravityDecay, coevolNetworkGmax, coevolNetworkExponent, coevolNetworkThresholdQuantile),
+    outputs += (avgLogPop1,avgLogPop2,avgLogPop3,stdLogPop1,stdLogPop2,stdLogPop3),
+    outputs += (gravityFlows, oppAverageUtility, averageDistance, giniEconomicWealth, oppWealth),
+    resources += workDirectory / "data",
+    urbanSystem := "EU"
+)
+
+
+//val purpose = "PSE_EU_LOCAL"
+val purpose = "PSE_TEST"
+val datestr = (new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()).toString
+val resdir = purpose+"_"+datestr
+
+val env = LocalEnvironment(10)
+
+PSEEvolution(
+    genome = Seq(
+        innovationWeight in (0.0, 0.01),
+        innovationGravityDecay in (0.1,10000.0),
+        innovationInnovationDecay in (0.1,10000.0),
+        innovationMutationRate in (0.01,0.5),
+        innovationNewInnovationHierarchy in (0.1,3.0),
+        innovationEarlyAdoptersRate in (0.01,0.9),
+        innovationUtilityStd in (0.7,2.0),
+        innovationUtilityDistrib in Seq("normal","log-normal"),
+        ecoWeight in (0.0, 0.01),
+        ecoMultiplier in (0.0001, 0.05),
+        ecoSizeEffectOnDemand in (0.1, 3.0),
+        ecoSizeEffectOnSupply in (0.1, 3.0),
+        ecoGravityDecay in (0.1,10000.0),
+        ecoWealthToPopulationExponent in (0.1, 3.0),
+        ecoPopulationToWealthExponent in (0.1, 3.0),
+        coevolWeight in (0.0, 0.01),
+        coevolGamma in (0.1, 3.0),
+        coevolGravityDecay in (0.1,10000.0),
+        coevolNetworkGmax in (0.0, 0.0001),
+        coevolNetworkExponent in (0.1, 3.0),
+        coevolNetworkThresholdQuantile in (0.1, 0.9)
+      ),
+      objective = Seq(
+        avgLogPop1 in (10.0 to 30.0 by 0.1),
+        avgLogPop2 in (10.0 to 30.0 by 0.1),
+        avgLogPop3 in (10.0 to 30.0 by 0.1),
+        stdLogPop1 in (1.0 to 10.0 by 0.1),
+        stdLogPop2 in (1.0 to 10.0 by 0.1),
+        stdLogPop3 in (1.0 to 10.0 by 0.1)
+      ),
+      evaluation = model,
+      stochastic = Stochastic(seed = replication),
+      termination = 100000,
+      parallelism = 10
+) on env hook (workDirectory / "pse" / resdir)//,1000)
+
