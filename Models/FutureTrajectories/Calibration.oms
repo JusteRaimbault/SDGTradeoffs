@@ -78,7 +78,7 @@ val model = ScalaTask("""
     coevolWeight,coevolGamma, coevolGravityDecay, coevolNetworkGmax, coevolNetworkExponent, coevolNetworkThresholdQuantile),
     outputs += (logmse,mselog),
     resources += workDirectory / "data",
-    urbanSystem := "EU"
+    urbanSystem := "CN"
 )
 
 
