@@ -82,7 +82,7 @@ val model = ScalaTask("""
 )
 
 
-val purpose = "CALIBRATION_LOCAL"
+val purpose = "CALIBRATION_CN_LOCAL"
 //val purpose = "CALIBRATION_TEST"
 val datestr = (new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()).toString
 val resdir = purpose+"_"+datestr
