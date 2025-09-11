@@ -82,8 +82,8 @@ val model = ScalaTask("""
 )
 
 
-val purpose = "OPTIMISATION_LOCAL"
-//val purpose = "OPTIMISATION_TEST"
+val purpose = "CALIBRATION_LOCAL"
+//val purpose = "CALIBRATION_TEST"
 val datestr = (new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()).toString
 val resdir = purpose+"_"+datestr
 
