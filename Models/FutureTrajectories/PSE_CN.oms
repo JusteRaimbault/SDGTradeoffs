@@ -109,26 +109,27 @@ val env = LocalEnvironment(10)
 
 PSEEvolution(
     genome = Seq(
-       innovationWeight in (0.00382405286074533,0.00875985830462999),
-	innovationGravityDecay in (9789.04307830831,9935.66169366317),
-	innovationInnovationDecay in (4574.20968645122,7504.70308523071),
-	innovationMutationRate in (0.463857311880957,0.4996439658799),
-	innovationNewInnovationHierarchy in (0.165274074542477,0.620121742320782),
-	innovationEarlyAdoptersRate in (0.109098587408994,0.877310320847101),
-	innovationUtilityStd in (0.882364911959983,1.43618506277867),
-	ecoWeight in (0.00686694354887202,0.00870714673148661),
-	ecoMultiplier in (0.00668997014545096,0.041757038115237),
-	ecoSizeEffectOnDemand in (2.71311348958232,2.83151106308429),
-	ecoSizeEffectOnSupply in (0.325242848903376,0.447163421511268),
-	ecoGravityDecay in (479.260101476493,5139.97796489452),
-	ecoWealthToPopulationExponent in (1.40902786212214,1.493303101674),
-	ecoPopulationToWealthExponent in (2.63618480014502,3),
-	coevolWeight in (0.0099981729369515,0.00999999578417238),
-	coevolGamma in (0.100000028598264,0.100401026074943),
-	coevolGravityDecay in (5632.04500484269,8472.26953595111),
-	coevolNetworkGmax in (8.77345307079644e-08,5.45414450945867e-06),
-	coevolNetworkExponent in (1.17551961756878,1.40185591671431),
-	coevolNetworkThresholdQuantile in (0.356349474101747,0.533378594376973) 
+innovationWeight in (0.00382405286074533,0.00875985830462999),
+innovationGravityDecay in (9789.04307830831,9935.66169366317),
+innovationInnovationDecay in (4574.20968645122,7504.70308523071),
+innovationMutationRate in (0.463857311880957,0.4996439658799),
+innovationNewInnovationHierarchy in (0.165274074542477,0.620121742320782),
+innovationEarlyAdoptersRate in (0.109098587408994,0.877310320847101),
+innovationUtilityStd in (0.882364911959983,1.43618506277867),
+innovationUtilityDistrib in Seq("normal","log-normal"),
+ecoWeight in (0.00686694354887202,0.00870714673148661),
+ecoMultiplier in (0.00668997014545096,0.041757038115237),
+ecoSizeEffectOnDemand in (2.71311348958232,2.83151106308429),
+ecoSizeEffectOnSupply in (0.325242848903376,0.447163421511268),
+ecoGravityDecay in (479.260101476493,5139.97796489452),
+ecoWealthToPopulationExponent in (1.40902786212214,1.493303101674),
+ecoPopulationToWealthExponent in (2.63618480014502,3.0),
+coevolWeight in (0.0099981729369515,0.00999999578417238),
+coevolGamma in (0.100000028598264,0.100401026074943),
+coevolGravityDecay in (5632.04500484269,8472.26953595111),
+coevolNetworkGmax in (8.77345307079644e-08,5.45414450945867e-06),
+coevolNetworkExponent in (1.17551961756878,1.40185591671431),
+coevolNetworkThresholdQuantile in (0.356349474101747,0.533378594376973) 
       ),
       objective = Seq(
         avgLogPop1 in (10.0 to 30.0 by 0.1),
@@ -142,5 +143,5 @@ PSEEvolution(
       stochastic = Stochastic(seed = replication),
       termination = 100000,
       parallelism = 10
-) on env hook (workDirectory / "pse" / resdir),1000)
+) on env hook (workDirectory / "pse" / resdir,1000)
 
