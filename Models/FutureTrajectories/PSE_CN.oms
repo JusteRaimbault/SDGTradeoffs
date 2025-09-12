@@ -53,7 +53,7 @@ val model = ScalaTask("""
     |val result: SDG.Result = SDG.runMultiModelMacro(
     |  SDG.setupMultiModelMacro(
     |   initialState._1, initialState._2, initialState._3,
-    |   seed = input.replication,
+    |   seed = rng.nextLong(),
     |   innovationWeight = input.innovationWeight,
     |   innovationGravityDecay = input.innovationGravityDecay,
     |   innovationInnovationDecay = input.innovationInnovationDecay,
@@ -96,7 +96,7 @@ val model = ScalaTask("""
     outputs += (avgLogPop1,avgLogPop2,avgLogPop3,stdLogPop1,stdLogPop2,stdLogPop3),
     outputs += (gravityFlows, oppAverageUtility, averageDistance, giniEconomicWealth, oppWealth),
     resources += workDirectory / "data",
-    urbanSystem := "CN"
+    urbanSystem := "CN", replication := 0L
 )
 
 
@@ -132,15 +132,15 @@ coevolNetworkExponent in (1.17551961756878,1.40185591671431),
 coevolNetworkThresholdQuantile in (0.356349474101747,0.533378594376973) 
       ),
       objective = Seq(
-        avgLogPop1 in (10.0 to 30.0 by 0.1),
-        avgLogPop2 in (10.0 to 30.0 by 0.1),
-        avgLogPop3 in (10.0 to 30.0 by 0.1),
-        stdLogPop1 in (1.0 to 10.0 by 0.1),
-        stdLogPop2 in (1.0 to 10.0 by 0.1),
-        stdLogPop3 in (1.0 to 10.0 by 0.1)
+        avgLogPop1 in (12.0 to 15.0 by 0.0001),
+        avgLogPop2 in (12.0 to 15.0 by 0.0001),
+        avgLogPop3 in (12.0 to 15.0 by 0.0001),
+        stdLogPop1 in (1.0 to 10.0 by 0.00001),
+        stdLogPop2 in (1.0 to 10.0 by 0.00001),
+        stdLogPop3 in (1.0 to 10.0 by 0.00001)
       ),
       evaluation = model,
-      stochastic = Stochastic(seed = replication),
+      //stochastic = Stochastic(seed = replication),
       termination = 100000,
       parallelism = 10
 ) on env hook (workDirectory / "pse" / resdir,1000)
