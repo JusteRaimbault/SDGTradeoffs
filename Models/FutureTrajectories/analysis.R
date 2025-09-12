@@ -65,7 +65,8 @@ for(j in 1:ncol(params)){
 # PSE results
 
 
-resprefix = 'PSE_EU_LOCAL_20250912_090708'
+#resprefix = 'PSE_EU_LOCAL_20250912_090708'
+resprefix = 'PSE_CN_LOCAL_20250912_070937'
 resdir = paste0(Sys.getenv('CS_HOME'),'/SDGTradeoffs/Results/FutureTrajectories/',resprefix,'/');dir.create(resdir,recursive = T, showWarnings = F)
 
 res <- read_csv(paste0('pse/',resprefix,'.csv'),name_repair='minimal')
@@ -99,7 +100,7 @@ for(indic in sdg_indics){
 #)+stdtheme,filename = paste0(resdir,'scatter-sdgs_colorinnovationGravityDecay.png'),width = 40,height=30,units='cm')
 
 ggsave(
-  ggplot(res[,sdg_indics],aes(x=gravityFlows,y=oppAverageUtility,color=averageDistance))+geom_point()+scale_color_continuous()
+  ggplot(res[,sdg_indics],aes(x=gravityFlows,y=oppAverageUtility,color=averageDistance))+geom_point()+scale_color_continuous()+stdtheme
   ,filename = paste0(resdir,'sdgs_gravityFlows-oppAverageUtility_color-giniEconomicWealth.png'),width = 30,height=30,units='cm'
 )
 
