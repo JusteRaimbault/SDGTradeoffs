@@ -8,7 +8,8 @@ library(reshape2)
 
 source(paste0(Sys.getenv('CS_HOME'),'/Organisation/Models/Utils/R/plots.R'))
 
-resprefix = 'CALIBRATION_CN_LOCAL_20250911_204557'
+#resprefix = 'CALIBRATION_CN_LOCAL_20250911_204557'
+resprefix='CALIBRATION_EU_LOCAL_20250911_182514'
 resdir = paste0(Sys.getenv('CS_HOME'),'/SDGTradeoffs/Results/FutureTrajectories/',resprefix,'/');dir.create(resdir,recursive = T, showWarnings = F)
 
 res <- read_csv(paste0('calibration/',resprefix,'.csv'),name_repair='minimal')
@@ -36,6 +37,10 @@ ggsave(
 # export boundaries at 1 IQ? or use quantiles ! -> 10-90% = 80% of params, good already!
 # directly in correct format for PSE script
 params = res[,c(-8,-22,-23)]
-apply(params,MARGIN = 2,function(col){paste0(' in (',quantile(col,0.1),',',quantile(col,0.9),')')})  
 # ! check saturated bounds
+
+#apply(params,MARGIN = 2,function(col){show(' in (',quantile(col,0.1),',',quantile(col,0.9),')')})  
+for(j in 1:ncol(params)){
+  writeLines(noquote((paste0(names(params)[j],' in (',quantile(unlist(params[,j]),0.1),',',quantile(unlist(params[,j]),0.9),')')))
+}
 
